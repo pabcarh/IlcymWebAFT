@@ -40,7 +40,7 @@ ImputEstadios<-function(estadios,ModSelected)
 ImputModelList<-function(ModSelected)
 {
   ImML<-switch(ModSelected,
-               "Development Time" = selectInput("modelo", h4("Choose the final distribution model:"),choices = c("logit", "probit","cloglog")),
+               "Development Time" = selectInput("modelo", h4("Choose the final distribution model:"),choices = c("weibull","lognormal","loglogistic")),
                "Development Rate" = chooserInput("modelo", "Available", "Selected", c("Shape & DeMichele 1","Shape & DeMichele 2","Shape & DeMichele 3","Shape & DeMichele 4","Shape & DeMichele 5","Shape & DeMichele 6","Shape & DeMichele 7","Shape & DeMichele 8","Shape & DeMichele 9","Shape & DeMichele 10","Shape & DeMichele 11","Shape & DeMichele 12","Shape & DeMichele 13","Shape & DeMichele 14","Deva 2","Logan 1","Briere 1","Stinner 1","Stinner 2","Stinner 3","Stinner 4","Latin 2","Kontodimas 1","Janish 1","Janish 2","Ratkowsky 1","Ratkowsky 2","Hilber y logan 1","Hilber y logan 2","Exponential simple","Tb Model","Exponential Model","Davidson","Pradham 1","Allahyari","Tanigoshi","Taylor"), c(), size = 12, multiple = TRUE),
                "Mortality" = chooserInput("modelo", "Available", "Selected", c("Quadratic", "Gaussian","Taylor","Wang 1","Wang 2","Wang 3","Wang 4","Wang 5","Wang 6","Wang 7","Wang 8","Wang 9","Wang 10","Gompertz-Makeham","Sharpe","Weibull","Janisch & Analytis"), c(), size = 12, multiple = TRUE),
                "Senescence" = chooserInput("modelo", "Available", "Selected", c("Shape & DeMichele 11","Shape & DeMichele 12","Shape & DeMichele 13","Shape & DeMichele 14","Exponential simple","Tb Model","Exponential Model","Ratkowsky","Pradham","Davidson","Janish-1","Tanigoshi","Wang-Lan-Ding","Stinner-3","Stinner-4","Logan-3","Hilber y logan 3"), c(), size = 12, multiple = TRUE),
@@ -114,7 +114,7 @@ DRmodels <- function(IDname,datashap)
     cof<-as.numeric(coef(lm(yli~xli)))
     ini <- list(Ha = -beta*1.987,Tl = -cof[1]/cof[2]+2, Hl =-100000 ,Hh =200000, Th =300)
   }
-
+  
   if(model==2)
   {
     ####  Shape&DeMichele con To
@@ -126,7 +126,7 @@ DRmodels <- function(IDname,datashap)
     cof<-as.numeric(coef(lm(yli~xli)))
     ini <- list(To=median(datashap[,1])+273.15,Ha = -beta*1.987,Tl = -cof[1]/cof[2]+1, Hl =-10000 ,Hh =200000, Th =as.numeric(subset(datashap,max(datashap[,2])<=datashap[,2]))[1]+273.15+2)
   }
-
+  
   if(model==3)
   {
     ####  Shape&DeMichele con To y p
@@ -176,7 +176,7 @@ DRmodels <- function(IDname,datashap)
     p=cof[1]+cof[2]*(median(datashap[,1])+273.15)
     ini <- list(p=p,To=median(datashap[,1])+273.15,Ha = -beta* 1.987,Hh =200000, Th =as.numeric(subset(datashap,max(datashap[,2])<=datashap[,2]))[1]+273.15)
   }
-
+  
   if(model==7)
   {
     ####  Shape&DeMichele con To, Ha
@@ -225,7 +225,7 @@ DRmodels <- function(IDname,datashap)
     cof<-as.numeric(coef(lm(yli~xli)))
     ini <- list(p=median(datashap[,2]),Ha = -beta* 1.987,Tl =-cof[1]/cof[2] +2, Hl =-100000)
   }
-
+  
   if(model==11)
   {
     ####  Shape&DeMichele con p,Ha, Hl,Tl,Hh,Th      
@@ -261,7 +261,7 @@ DRmodels <- function(IDname,datashap)
     cof<-as.numeric(coef(lm(yli~xli)))
     ini <- list(p=median(datashap[,2]),Ha = -beta*1.987,Tl = -cof[1]/cof[2]+2, Hl =-100000)
   }
-
+  
   if(model==14)
   {
     ####  Shape&DeMichele con p,Ha, Hh,Th      
@@ -285,13 +285,13 @@ DRmodels <- function(IDname,datashap)
     ####  Logan1 Y,Tmax, p, v
     ini <- list(Y=min(datashap[,2]),Tmax = max(datashap[,1]), p = median(datashap[,2]), v=3.5)
   }  
-
+  
   if(model==19)
   {
     ####  Briere1 aa,To,Tmax
     ini <- list(aa=0.00003,To=min(datashap[,1])-4,Tmax =max(datashap[,1])+90)
   }  
-
+  
   if(model==21)
   {
     ####  Stinner1 Rmax,Topc,k1,k2
@@ -321,7 +321,7 @@ DRmodels <- function(IDname,datashap)
     ####  Stinner4 c1,c2,k1,k2,To
     ini=c(c1=-0.962,c2=0.2545,k1=-3.91,k2=0.54,To=7.77)
   }
-
+  
   if(model==23)
   {
     ####  Latin2 Tl, p, dt,L
@@ -339,7 +339,7 @@ DRmodels <- function(IDname,datashap)
     ####  Janish1 Dmin,Topt,K
     ini=c(Dmin=2.8,Topt=mean(datashap[,1]),K=0.17)
   }
-
+  
   if(model==47)
   {
     ####  Janish2 c,a,b,Tm
@@ -351,7 +351,7 @@ DRmodels <- function(IDname,datashap)
     ####  Ratkowsky1 b,Tb
     ini=c(b=0.000008487,Tb=-150.881)
   }
-
+  
   if(model==45)
   {
     ####  Ratkowsky2 aa,Tmin,Tmax,b
@@ -381,7 +381,7 @@ DRmodels <- function(IDname,datashap)
     ####  Tb Model  sy,b,Tb,DTb
     ini=c(sy=0.32,b=0.0924,Tb=max(datashap[,1]),DTb=0.084)
   }
-
+  
   if(model==27)
   {
     ####  Exponential Model  sy,b,Tb
@@ -405,7 +405,7 @@ DRmodels <- function(IDname,datashap)
     ####  Allahyari  P,Tmax, Tmin,n,m
     ini=c(P=1.2,Tmax=max(datashap[,1]), Tmin=min(datashap[,1])-9,n=1,m=0.5)
   }
-
+  
   if(model==48)
   {
     ####  Tanigoshi  P,Tmax, Tmin,n,m
@@ -422,7 +422,7 @@ DRmodels <- function(IDname,datashap)
   }
   
   rm(IDname);rm(datashap)
-
+  
   Objs0<-ls()
   Objs<-list()
   for (k in 1:length(Objs0)){
@@ -669,13 +669,13 @@ MRmodels <- function(IDname,datm)
     # Sharpe
     inim=c(Hl=-60000,Tl=287,Hh=100000,Th=308,Bm=0.193)
   }
-
+  
   if(modelm==38)
   {
     # Gompertz-Makeham
     inim=c(a1=8e-08,b1=0.5,a2=29,b2=-0.337,c1=0.001)
   }
-
+  
   if(modelm==39)
   {
     # Weibull
@@ -687,7 +687,7 @@ MRmodels <- function(IDname,datm)
     # Janisch & Analytis
     inim=c(Dmin=0.3,k=0.088,Tp=-15.5,lamb=0.116)
   }
-
+  
   rm(IDname)
   
   Objs0<-ls()
@@ -855,8 +855,9 @@ ROmodels <- function(IDname)
 
 DevTime <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALSE)
 {
-  #source("D:/_BK-D/Pablo/R archivos/shiny-Examples/041-dynamic-ui-ILCYM/lib/developmentTime.r")
-  #path<-"D:/LH/Paratrioza-Cohort-2016"
+  library(survival)
+  #source("D:/ILCYM/ILCYM - AFT/lib/developmentTime.r")
+  #path<-"D:/ILCYM/Tecia solanivora - AFT - 2017"
   datos<-list(1)
   load(paste(path,"/PhenologySims.RData",sep=""))
   load(paste(path,"/PhenologyStats.RData",sep=""))
@@ -867,46 +868,118 @@ DevTime <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALSE)
     datos[[i]]<-read.table(paste(path,"/Data/",estadios1[i],".txt",sep="")) # CAMBIO
   }
   
+  #est<-"Egg"
+  dat=datos[[(1:length(datos))[est==estadios1]]]
+  tpINI.ALL<-(aggregate(dat[,5],list(Batch=dat[,1],temp=dat[,2]),mean))
+  tpINI<-tpINI.ALL[,2]
+  if(ncol(dat)==6){colnames(dat)<-c("Batch","Temp","start","stop","Sample","Sex");IDc<-6}else{
+    colnames(dat)<-c("Batch","Temp","start","stop","Sample");IDc<-2}
+  # modelo<-"weibull"
+  # modelo<-"loglogistic"
+  # modelo<-"lognormal"
+  # modelo<-"gaussian"
+  
+  datG<-IncludBatch(dat,IDc)
+  dat$TempBatch<-paste(dat[,IDc],dat$Batch,sep="-")
+  
   estadios<-estadios1
   estadiosINMD<-estadios[1:(length(estadios)-2)]
   estadiosADLT<-estadios[(length(estadios)-1):length(estadios)]
   
-  intervalo<-1
-  temperatura<-temp(datos,estadios,est)
-  tp<-temperatura$temperature
-  opc=1
+  tp<-sort(datG[,1]) # por el momento
   
-  distri<-devath(opc,datos,estadios,est,tp,intervalo=intervalo,modelo)
-  matri<-distri$matriz
-  slope <- distri$Slope; names(slope)<-"slope"
-  parametros<-distri$parametros
-  test<-distri$model
-  exis.val <- distri$exis.val
+  Group<-dat$TempBatch
+  #Tempr<-paste("_",dat[,2],"-Batch_",dat[,1],sep="")
   
-  if(saveSelec){modelo=""}
+  out.weib <-survreg(Surv(start, stop, type = "interval2") ~ Group, dist = modelo,data=dat)
+  #out.weib.sex <-survreg(Surv(start, stop, type = "interval2") ~ Tempr+Sex, dist = modelo,data=dat)
+  tmv<-data.frame(TiemVid=apply(dat[,3:4],1,mean),Tempr=dat[,ncol(dat)])
+  tmv0<-data.frame(TiemVid=apply(dat[,3:4],1,mean),Tempr=dat[,ncol(dat)])
+  Nmuestras<-aggregate(dat[,5],list(Group=dat[,ncol(dat)]),unique);colnames(Nmuestras)[2]<-"Sample"
+  
+  #nx<-c(0,5)
+  #ny<-c(0,1)
+  #tp0<-sort(datG[,1])
+  tmv2<-CohortTable(dat,IDc=ncol(dat))$tmv2
+  CohortTableF <-CohortTable(dat,IDc=ncol(dat))$CohortT
+  
+  #Prueba<-data.frame(Tempr=as.factor(tp))
+  OBS <- aggregate(tmv0[,1],list(TempBatch=tmv0[,2]),median)
+  OBS <- OBS[match(datG[,2],OBS[,1]),]
+  
+  #FITS=predict(out.weib,Prueba,se.fit=TRUE)
+  
+  #Medians<-as.data.frame(predict(out.weib, newdata=data.frame(Group=as.factor(tp)), type="quantile", p=c(0.5), se=TRUE));colnames(Medians)[1]<-"Median.Fit"
+  Medians<-as.data.frame(predict(out.weib, newdata=data.frame(Group=datG[,2]), type="quantile", p=c(0.5), se=TRUE));colnames(Medians)[1]<-"Median.Fit"
+  SE_Med<-(Medians[,1])*(summary(out.weib)[[9]][,2])[1:nrow(Medians)]
+  SE_invMed<-(1/Medians[,1])*(summary(out.weib)[[9]][,2])[1:nrow(Medians)]
+  loglikR <- out.weib$loglik[1] # Model has only intercept.
+  loglikF <- out.weib$loglik[2] # Model includes the covariate x.
+  ModelDev <- sum(resid(out.weib,type="deviance")^2) # # Full model deviance, No problem when I use weibull model
+  #ModelDev <- summary(out.weib)$chi
+  loglikSat <- loglikF + ModelDev/2 # Satured model
+  nullDev <- - 2*(loglikR - loglikSat) # Reduced Model (only intercept)
+  PartialDev <- nullDev - ModelDev
+  #Indicators<-AIC.AllModels(Tempr,dat)
+  Indicators<-AIC.AllModels(Group,dat)
+
+  glib<-summary(out.weib)$df # all degree freedom
+  VIF<-ModelDev/(nrow(tmv2)-glib) # it is different to Marc's calculation
+  #VIFxSE_InvMed<-sqrt(VIF)*(1/(Medians[,1]^2))*(summary(out.weib)$table[,2])[1:nrow(Medians)]
+  if(is.nan(ModelDev)){VIFxSE_InvMed<-SE_invMed}else{
+    VIFxSE_InvMed<-sqrt(VIF)*(1/(Medians[,1]))*(summary(out.weib)$table[,2])[1:nrow(Medians)]
+  }
+  #VIFxSE_InvMed<-(1/Medians[,1])*(summary(out.weib)[[9]][,2])[1:nrow(Medians)] # solo he quitado el VIF
+  ModCheck<-data.frame("Residual_Analysis"=c(loglikR,loglikF,ModelDev,loglikSat,nullDev,VIF,sqrt(VIF)))
+  rownames(ModCheck)<-c("loglikR","loglikF","ModelDev","loglikSat","nullDev","VIF","sqrt(VIF)")
+  #-2*(loglikF-loglikSat) # this value is the same with "ModelDev"
+  
+  matF<-data.frame(Group=datG[,2],Tempr=datG[,1],Time.Obs=OBS[,2],"Time(Median)"=Medians[,1],"Log.Time"=log(Medians[,1]),"DR(1/Time)"=1/Medians[,1],"SE.DR"=VIFxSE_InvMed,"Low.Lim_DR"=1/Medians[,1]-VIFxSE_InvMed*qt(0.975,nrow(tmv2)-glib),"Up.Lim_DR"=1/Medians[,1]+VIFxSE_InvMed*qt(0.975,nrow(tmv2)-glib))
+  #matF<-cbind(Prueba,Time.Obs=OBS[,2],"Time(Median)"=Medians[,1],"Log.Time"=log(Medians[,1]),"DR(1/Time)"=1/Medians[,1],"SE.DR"=VIFxSE_InvMed,"Low.Lim_DR"=1/Medians[,1]-VIFxSE_InvMed*qt(0.975,nrow(tmv2)-glib),"Up.Lim_DR"=1/Medians[,1]+VIFxSE_InvMed*qt(0.975,nrow(tmv2)-glib))
+  row.names(matF)<-1:nrow(matF)
+  # matF<-matF[order(tp0),]
+  # matF$Tempr<-tp0[order(tp0)]
+  CL<-VIFxSE_InvMed*qt(0.975,nrow(tmv2)-glib)
+  
+  print(summary(out.weib))
+  cat("\n","MODEL CHECKING: DATA DIAGNOSTICS","\n")
+  print(ModCheck)
+  cat("\n","MODEL CHECKING: INDICATORS OF ALL MODELS","\n")
+  print(Indicators)
+  cat("\n")
+  print(matF)
+  if(!is.nan(ModelDev))
+  {
+    cat("\n","*VIF is included as correction factor in SE","\n")
+    cat("\n")  
+  }
+  
   if(OPTplot){
-    plot<-plot.devath (matri,parametros,test,c(nx[1],nx[2]),0.1,90,0.8,labx="Development time (Ln-days)",laby="Accumulated frequency (%)",titulo=modelo,grises=FALSE,intervalo=intervalo,exis.val=exis.val)
+    ParamT(out.weib,nx,ny,modelo,tp=datG[,2],tp0=datG[,1],tmv2)
     if(est==estadios[(length(estadios))-1]){
-      mediana<-plot$median
+      mediana<-matF$Log.Time
     }
   }
   if(saveSelec){
-    report$fenologia[[1]][[(1:length(estadios))[estadios==est]]]<-distri$tabest
+    report$fenologia[[1]][[(1:length(estadios))[estadios==est]]]<-matF
     if(length(estadiosINMD[est==estadiosINMD]) >= 1){
-      params$hfeno$distri_dv[[(1:length(estadios))[estadios==est]]] <- test
-      params$hfeno$slope_dv[[(1:length(estadios))[estadios==est]]] <-  slope
-      params$hfeno$StEr_DTime[[(1:length(estadios))[estadios==est]]] <- slope
+      params$hfeno$distri_dv[[(1:length(estadios))[estadios==est]]] <- modelo
+      #params$hfeno$slope_dv[[(1:length(estadios))[estadios==est]]] <-  coef(out.weib)[1]
+      params$hfeno$slope_dv[[(1:length(estadios))[estadios==est]]] <- 1/out.weib$scale
+      params$hfeno$StEr_DTime[[(1:length(estadios))[estadios==est]]] <- summary(out.weib)[[9]][,"Std. Error"][1]
     }else{
       if(est==estadios[(length(estadios))-1]){
-        params$hfeno$distri_snh <- test
-        params$hfeno$slope_snh <- slope
-        params$hfeno$StEr_DTimeH <- slope
+        params$hfeno$distri_snh <- modelo
+        #params$hfeno$slope_snh <- coef(out.weib)[1]
+        params$hfeno$slope_snh <- 1/out.weib$scale
+        params$hfeno$StEr_DTimeH <- summary(out.weib)[[9]][,"Std. Error"][1]
         report$mediana<-mediana
-        report$tp<-tp
+        report$tp<-tpINI
       }else{
-        params$hfeno$distri_snm <- test
-        params$hfeno$slope_snm <- slope
-        params$hfeno$StEr_DTimeM <- slope
+        params$hfeno$distri_snm <- modelo
+        #params$hfeno$slope_snm <- coef(out.weib)[1]
+        params$hfeno$slope_snm <- 1/out.weib$scale
+        params$hfeno$StEr_DTimeM <- summary(out.weib)[[9]][,"Std. Error"][1]
       }
     }
     save(report, file = paste(path,"/PhenologyStats.RData",sep=""))
@@ -920,16 +993,21 @@ DevTime <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALSE)
 
 DevRate <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALSE)
 {
+  #source("D:/ILCYM/ILCYM - AFT/lib/dev_rate_new.r")
+  #path<-"D:/ILCYM/Tecia solanivora - AFT - 2017"
+  
   load(paste(path,"/PhenologySims.RData",sep=""))
   load(paste(path,"/PhenologyStats.RData",sep=""))
   estadios<-params$estadios
   
-  
-  datashap0 <- report$fenologia[[1]][[(1:length(estadios))[estadios==est]]][,c(1,5,6,7)] # putting only the necessesary
-  datashap <- data.frame(x=datashap0[,1],y=1/datashap0[,2],Lower=1/datashap0[,4],Upper=1/datashap0[,3])
+  #est<-"Egg"
+  #datashap0 <- report$fenologia[[1]][[(1:length(estadios))[estadios==est]]][,c(1,5,7,8)] # putting only the necessesary
+  datashap0 <- report$fenologia[[1]][[(1:length(estadios))[estadios==est]]][,c(2,6,8,9)] # putting only the necessesary
+  datashap <- data.frame(x=datashap0[,1],y=datashap0[,2],Lower=datashap0[,3],Upper=datashap0[,4])
   datashap2 <- datashap; colnames(datashap2)=c("x","y","y","y")
   datao=rbind(datashap2[,c(1,2)],datashap2[,c(1,3)],datashap2[,c(1,4)])
   
+  #IDname<-"Tb Model"
   IDname<-modelo[PosModel] # al final se va a editar
   Temp<-DRmodels(IDname,datashap) ## Verificar
   for(i in 1:length(Temp$NamesO)){assign((Temp$NamesO)[i],(Temp$Objs)[[i]])}
@@ -952,15 +1030,17 @@ DevRate <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALSE)
   qtt<-sol_develop$q
   sdli<-sol_develop$sdli
   
+  #nx<-c(0,45)
   #ny<-c(0,1)
   TempNY<-seq(ny[1],ny[2],length.out=round((ny[2]-ny[1])/(0.1*(ny[2]-0))))
   scaleY<-TempNY[2]-TempNY[1];Scales<-c(0.01,0.02,0.04,0.05,0.1,0.2,0.4,0.5)
   DEuq<-(scaleY-Scales)^2
   scaleY<-Scales[DEuq==min(DEuq)]
-    
+  
   # scaleY<-round(scaleY,2)
   # TempNY2<-seq(ny[1],ny[2],scaleY)
   # ny[2]<-TempNY2[length(TempNY2)]
+  
   if(saveSelec){IDname=""}
   if(OPTplot){
     plot_shape<-grafshape(model,estshap,datashap,qtt,sdli,corrx=c(nx[1],nx[2]), corry=c(ny[1],ny[2]),mini=0,maxi=100,coefi,limit="yes",1,labx=expression(paste("temperature (", degree, "C)")), titulo=IDname,laby="Development rate (1/days)", grises=FALSE, scaleY=scaleY, scaleX=5, est=est, estadios=estadios)
@@ -987,6 +1067,9 @@ DevRate <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALSE)
 
 DevMort <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALSE)
 {
+  #source("D:/ILCYM/ILCYM - AFT/lib/mortality.r")
+  #path<-"D:/ILCYM/Tecia solanivora - AFT - 2017"
+  
   load(paste(path,"/PhenologySims.RData",sep=""))
   load(paste(path,"/PhenologyStats.RData",sep=""))
   estadios<-params$estadios
@@ -996,9 +1079,13 @@ DevMort <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALSE)
   
   for(i in 1:length(estadios)) # CAMBIO
   {
-    datos[[i]]<-read.table(paste(path,"/Data/",estadios[i],".txt",sep="")) # CAMBIO
+    borrar0<-read.table(paste(path,"/Data/",estadios[i],".txt",sep="")) # CAMBIO
+    colnames(borrar0)<-c("Batch","Temp","start","stop","Sample")
+    borrar0<-IncludBatch(borrar0)
+    datos[[i]]<-CohortTable2(borrar0)
   }
   
+  #est<-"Pupa"
   temperaturas  <-  temp(datos, estadios, est)
   tp<-temperaturas$temperature
   temps<-length(tp)
@@ -1012,12 +1099,12 @@ DevMort <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALSE)
   
   labx=expression(paste("temperature (", degree, "C)"));laby="mortality (%)";titulo=IDname
   
-#   jpeg(paste(path,"/temporal.jpg",sep=""))
-#   pbmortal<-pruebamortal("mortal",modelm,datm,inim,corrx=c(0,50),corry=c(0,100),mini=-5,maxi=55,labx,laby,titulo)
-#   dev.off()
-
+  #   jpeg(paste(path,"/temporal.jpg",sep=""))
+  #   pbmortal<-pruebamortal("mortal",modelm,datm,inim,corrx=c(0,50),corry=c(0,100),mini=-5,maxi=55,labx,laby,titulo)
+  #   dev.off()
+  
   limit<-"yes"
-#   inim<-pbmortal$ini
+  #   inim<-pbmortal$ini
   
   ## Escojemos el algoritmo
   if(modelm < 7){alg<-"Newton"}
@@ -1057,20 +1144,24 @@ DevMort <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALSE)
 
 DevSenes <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALSE)
 {
+  #source("D:/_BK-D/Pablo/R archivos/shiny-Examples/041-dynamic-ui-ILCYM/lib/senescence.r")
+  #path<-"D:/LH/Symmestrichema AFT - Project"
   
   load(paste(path,"/PhenologySims.RData",sep=""))
   load(paste(path,"/PhenologyStats.RData",sep=""))
   estadios<-params$estadios
   
-  datashap0 <- report$fenologia[[1]][[(1:length(estadios))[estadios==est]]][,c(1,5,6,7)] # putting only the necessesary
-  datashap <- data.frame(x=datashap0[,1],y=1/datashap0[,2],Lower=1/datashap0[,4],Upper=1/datashap0[,3])
+  #est<-"egg"
+  #datashap0 <- report$fenologia[[1]][[(1:length(estadios))[estadios==est]]][,c(1,5,7,8)] # putting only the necessesary
+  datashap0 <- report$fenologia[[1]][[(1:length(estadios))[estadios==est]]][,c(2,6,8,9)] # putting only the necessesary
+  datashap <- data.frame(x=datashap0[,1],y=datashap0[,2],Lower=datashap0[,3],Upper=datashap0[,4])
   datashap2 <- datashap; colnames(datashap2)=c("x","y","y","y")
   datao=rbind(datashap2[,c(1,2)],datashap2[,c(1,3)],datashap2[,c(1,4)])
   
   IDname<-modelo[PosModel]
   Temp<-SNCmodels(IDname,datashap) ## Verificar
   for(i in 1:length(Temp$NamesO)){assign((Temp$NamesO)[i],(Temp$Objs)[[i]])}
-
+  
   #jpeg(paste(path,"/temporal.jpg",sep=""))
   shapprueba<-prueba(model,datashap,datao,ini,corrx=c(0,55),corry=c(0,0.9),punt=1:6,labx="X",laby="Y",titulo="Title",grises=T)
   #dev.off()
@@ -1093,7 +1184,7 @@ DevSenes <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALSE
   scaleY<-TempNY[2]-TempNY[1];Scales<-c(0.01,0.02,0.04,0.05,0.1,0.2,0.4,0.5)
   DEuq<-(scaleY-Scales)^2
   scaleY<-Scales[DEuq==min(DEuq)]
-
+  
   if(saveSelec){IDname=""}
   if(OPTplot){
     plot_shape<-grafshape(model,estshap,datashap,qtt,sdli,corrx=c(nx[1],nx[2]), corry=c(ny[1],ny[2]),mini=0,maxi=100,coefi,limit="yes",1,labx=expression(paste("temperature (", degree, "C)")), titulo=IDname,laby="Development rate (1/days)", grises=FALSE, scaleY=scaleY, scaleX=5, est=est, estadios=estadios)
@@ -1126,6 +1217,9 @@ DevSenes <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALSE
 
 DevTotOvi <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALSE)
 {
+  #source("D:/_BK-D/Pablo/R archivos/shiny-Examples/041-dynamic-ui-ILCYM/lib/totalOviposition.r")
+  #path<-"D:/LH/Symmestrichema AFT - Project"
+  
   load(paste(path,"/PhenologySims.RData",sep=""))
   load(paste(path,"/PhenologyStats.RData",sep=""))
   estadios<-params$estadios
@@ -1139,6 +1233,8 @@ DevTotOvi <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALS
   }
   
   dato<-read.table(paste(path,"/Data/",OvipFile[1],".txt",sep=""))
+  #est<-"female"
+  #dat=datos[[(1:length(datos))[est==estadios1]]]
   
   temperaturas  <-  temp(datos, estadios, est)
   tp<-temperaturas$temperature
@@ -1155,12 +1251,12 @@ DevTotOvi <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALS
   
   labx=expression(paste("temperature (", degree, "C)"));laby="total oviposition";titulo=IDname
   
-#   jpeg(paste(path,"/temporal.jpg",sep=""))
-#   pbmortal<-pruebamortal("taza",modelm,datm,inim,corrx=c(0,50),corry=c(0,200),mini=-5,maxi=55,labx,laby,titulo)
-#   dev.off()
+  #   jpeg(paste(path,"/temporal.jpg",sep=""))
+  #   pbmortal<-pruebamortal("taza",modelm,datm,inim,corrx=c(0,50),corry=c(0,200),mini=-5,maxi=55,labx,laby,titulo)
+  #   dev.off()
   
   limit<-"yes"
-#   inim<-pbmortal$ini
+  #   inim<-pbmortal$ini
   
   ## Escojemos el algoritmo
   if(modelm < 7){alg<-"Newton"}
@@ -1181,13 +1277,13 @@ DevTotOvi <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALS
   scaleY<-TempNY[2]-TempNY[1];Scales<-c(2,5,10,20,40,50,100,200)
   DEuq<-(scaleY-Scales)^2
   scaleY<-Scales[DEuq==min(DEuq)]
-
+  
   if(saveSelec){titulo=""}
   
   if(OPTplot){
     plot_mort<-grafmort("taza",modelm,estimor,g,datm,corrx=c(nx[1],nx[2]),corry=c(ny[1],ny[2]),mini=0,maxi=60,limit,1,labx,laby,titulo,scaleY=scaleY)
   }
-    
+  
   if(saveSelec){
     report$fenologia$OvipTotal<-datm
     
@@ -1206,17 +1302,20 @@ DevTotOvi <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALS
 # Relative oviposition procedure
 
 RelOvi <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALSE)
-{
+{ #source("D:/ILCYM/ILCYM - AFT/lib/developmentTime.r")
+  #source("D:/ILCYM/ILCYM - AFT/lib/relativeOviposition.r")
+  #path<-"D:/ILCYM/Tecia solanivora - AFT - 2017"
+  
   load(paste(path,"/PhenologySims.RData",sep=""))
   load(paste(path,"/PhenologyStats.RData",sep=""))
   estadios<-params$estadios
   OvipFile<-params$ovip
   mediana<-report$mediana
-  tp<-report$tp
+  tp<-unique(report$tp)
   opc<-1
   #dato<-read.table("D:/LH/Paratrioza-Cohort-2016/Data/Oviposition.txt")
   dato<-read.table(paste(path,"/Data/",OvipFile[1],".txt",sep=""))
-  dato<-dato[!is.na(match(dato[,1],tp)),]
+  #dato<-dato[!is.na(match(dato[,1],tp)),]
   colum=2
   
   
@@ -1233,12 +1332,12 @@ RelOvi <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALSE)
   
   limit<-"yes"
   alg<-"Marquardtr"
-
-#   jpeg(paste(path,"/temporal.jpg",sep=""))
-#   pbovi<-pruebaovi(modelm, ovifemal,inim,corrx,corry,mini,maxi,labx,laby,titulo)
-#   dev.off()
   
-#   inim<-pbovi$ini
+  #   jpeg(paste(path,"/temporal.jpg",sep=""))
+  #   pbovi<-pruebaovi(modelm, ovifemal,inim,corrx,corry,mini,maxi,labx,laby,titulo)
+  #   dev.off()
+  
+  #   inim<-pbovi$ini
   
   pesos<-"LS"
   weights<-1
@@ -1255,11 +1354,11 @@ RelOvi <- function(path,est,modelo,PosModel,OPTplot=TRUE,nx,ny,saveSelec=FALSE)
   sdli=sol_ovi$sdli
   table5  <-sol_ovi$parovi
   if(saveSelec){titulo=""}
-
+  
   if(OPTplot){
     plot_ovi<-grafovi(modelm,estimor,g,ovifemal,corrx,mini,maxi,legx,legy,sdli,qto,limit,tam=c(1.6,0.8),labx,laby,titulo,xi=xi)
   }
-    
+  
   if(saveSelec){
     report$fenologia$OvipTotal<-ovifemal
     
@@ -1289,7 +1388,7 @@ TransmRate <- function(path,Namflucfile,modelo,PosModel,OPTplot=TRUE,nx,ny,saveS
   
   #Namflucfile<-input$transmfile
   datashap0<-read.table(Namflucfile$datapath[1])
-
+  
   #datashap0<-read.table("D:/LH/Transmission Files/TransmissionData.txt")
   
   #datashap0 <- report$fenologia[[1]][[(1:length(estadios))[estadios==est]]][,c(1,5,6,7)] # putting only the necessesary
@@ -1333,7 +1432,7 @@ TransmRate <- function(path,Namflucfile,modelo,PosModel,OPTplot=TRUE,nx,ny,saveS
   if(OPTplot){
     plot_shape<-grafshape(model,estshap,datashap,qtt,sdli,corrx=c(nx[1],nx[2]), corry=c(ny[1],ny[2]),mini=0,maxi=100,coefi,limit="yes",1,labx=expression(paste("temperature (", degree, "C)")), titulo=IDname,laby="Development rate (1/days)", grises=FALSE, scaleY=scaleY, scaleX=5, est=est, estadios=estadios)
   }
-
+  
   if(saveSelec){
     report$fenologia$TransmRate<-datashap
     params$transm$ftr_tr <- sol_develop$ecuaci
@@ -1342,7 +1441,7 @@ TransmRate <- function(path,Namflucfile,modelo,PosModel,OPTplot=TRUE,nx,ny,saveS
     params$transm$ptr_tr <- tempPAR2
     params$transm$StEr_TRate <- sol_develop$Std.Error
     params$modeltransm<-model
-
+    
     save(report, file = paste(path,"/PhenologyStats.RData",sep=""))
     save(params, file = paste(path,"/PhenologySims.RData",sep=""))
   }
@@ -1355,6 +1454,8 @@ TransmRate <- function(path,Namflucfile,modelo,PosModel,OPTplot=TRUE,nx,ny,saveS
 
 DeteSim <- function(path,N,M,Vtempt,Intv,OPTplot=TRUE)
 {
+  #source("D:/ILCYM/ILCYM - AFT/lib/dete_sim.r")
+  #path<-"D:/ILCYM/Tecia solanivora - AFT - 2017"
   load(paste(path,"/PhenologySims.RData",sep=""))
   hfeno<-params$hfeno
   xi<-params$xi
@@ -1363,6 +1464,8 @@ DeteSim <- function(path,N,M,Vtempt,Intv,OPTplot=TRUE)
   temps<-seq(Vtempt[1],Vtempt[2],Intv)
   reps <- rep(1,length(temps))
   
+  #N=100
+  #M=365
   steps<-48
   #modelim=c(modelim,modelm)
   sexratio<-0.5 # se puede extraer OJOOOOO
@@ -1549,19 +1652,19 @@ GeoSimFlucT <- function(dir,Index=NULL,brks=NULL,HistRange=FALSE)
   if(!is.null(Index)){nombreINDX <- switch(Index,"PT"="ITT.asc","PAT"="PTP.asc")}
   if(HistRange){
     par(mfrow=c(1,2))
-
+    
     PT = readAsciiGrid(paste(dir,"/","ITT.asc",sep=""))  ### extraemos la variable de altura
     cap=raster(PT)
     rng <- c(minValue(cap), maxValue(cap))
     hist(cap,main="PT",xlab=paste("min=",rng[1]," and max=",rng[2],sep=""))
     rm(PT);rm(cap)
-
+    
     PAT = readAsciiGrid(paste(dir,"/","PTP.asc",sep=""))  ### extraemos la variable de altura
     cap=raster(PAT)
     rng <- c(minValue(cap), maxValue(cap))
     hist(cap,main="PAT",xlab=paste("min=",rng[1]," and max=",rng[2],sep=""))
     rm(PAT);rm(cap)
-
+    
   }else{
     INDX = readAsciiGrid(paste(dir,"/",nombreINDX,sep=""))  ### extraemos la variable de altura
     cap=raster(INDX)
@@ -1583,3 +1686,4 @@ GeoSimFlucT <- function(dir,Index=NULL,brks=NULL,HistRange=FALSE)
     rm(INDX);rm(cap)
   }
 }
+
