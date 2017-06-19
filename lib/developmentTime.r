@@ -381,11 +381,11 @@ devath <- function(opc, datos, estadios, est, tp,intervalo,modelo,poli=1)
 	parametros <- as.vector(parametros)
 	slope <- parametros[nag + 1]
 	intercepto <- parametros[1:nag]
-	if(mod=="probit") cua1<-as.data.frame(t(as.matrix(c("probit",paste(round(slope,3),"(","±",round(as.numeric(coeficientes[,2][nag+1]),3),")"),round(as.numeric(coeficientes[,3][nag+1]),3),round(as.numeric(coeficientes[,4][nag+1]),3),
+	if(mod=="probit") cua1<-as.data.frame(t(as.matrix(c("probit",paste(round(slope,3),"(","Â±",round(as.numeric(coeficientes[,2][nag+1]),3),")"),round(as.numeric(coeficientes[,3][nag+1]),3),round(as.numeric(coeficientes[,4][nag+1]),3),
 										round(deviance(modelop),3),round(aic[1],3),round(mscp,3),round(rp,3),round(r_ajusp,3)))))
-	if(mod=="logit") cua1<-as.data.frame(t(as.matrix(c("logit",paste(round(slope,3),"(","±",round(as.numeric(coeficientes[,2][nag+1]),3),")"),round(as.numeric(coeficientes[,3][nag+1]),3),round(as.numeric(coeficientes[,4][nag+1]),3),
+	if(mod=="logit") cua1<-as.data.frame(t(as.matrix(c("logit",paste(round(slope,3),"(","Â±",round(as.numeric(coeficientes[,2][nag+1]),3),")"),round(as.numeric(coeficientes[,3][nag+1]),3),round(as.numeric(coeficientes[,4][nag+1]),3),
 										round(deviance(modelol),3),round(aic[2],3),round(mscl,3),round(rl,3),round(r_ajusl,3)))))
-	if(mod=="cloglog") cua1<-as.data.frame(t(as.matrix(c("cloglog",paste(round(slope,3),"(","±",round(as.numeric(coeficientes[,2][nag+1]),3),")"),round(as.numeric(coeficientes[,3][nag+1]),3),round(as.numeric(coeficientes[,4][nag+1]),3),
+	if(mod=="cloglog") cua1<-as.data.frame(t(as.matrix(c("cloglog",paste(round(slope,3),"(","Â±",round(as.numeric(coeficientes[,2][nag+1]),3),")"),round(as.numeric(coeficientes[,3][nag+1]),3),round(as.numeric(coeficientes[,4][nag+1]),3),
 										round(deviance(modeloc),3),round(aic[3],3),round(mscc,3),round(rc,3),round(r_ajusc,3)))))
 	if(mod=="logit" || mod=="probit") p50 <- (-intercepto)/slope else p50 <- (-(-log(-log(0.5)))-intercepto)/slope   ##  ERROR
 	cat("\nESTIMATION OF PARAMETERS")
@@ -428,101 +428,96 @@ devath <- function(opc, datos, estadios, est, tp,intervalo,modelo,poli=1)
 ###############################
 plot.devath <- function (matri, parametros,test,corrx,lgx,lgy,tam,labx = NULL, laby = NULL,titulo=NULL,grises=FALSE,intervalo=intervalo,exis.val)
 {
-  
-  slope <- parametros[-1:-(length(parametros) - 1)]
-  intercepto <- parametros[-(length(parametros))]
-  nag <- length(levels(factor(matri[, 1])))
-  not <- levels(factor(matri[, 1]))
-  p50 <- li <- ls <- rep(0, nag)
-  #for (i in 1:nag) agente <- subset(matri, matri[, 1] == not[i])
-  agente <- subset(matri, matri[, 1] == not[nag])
-  
-  #corrx[2]<-5 # 5
-  lgx<- 0 #4.4
-  lgy<-100
-  laby<-"accumulated frequency"
-  labx<-"log-development time (log-days)"
-  MARGEN=c(4.2, 5, 4, 0.5)
-  #par(cex=tam)
-  par(mar=MARGEN,family="serif",font=1,cex.axis=1.8,cex.lab=1.8)
-  plot(agente[, 3], agente[, 5]*100/agente[,6], axes=F,xaxt = "n",xlim =corrx , ylim = c(0, 100),
-       frame = F, ylab = laby, xlab = labx,main=titulo,col="transparent")
-  #plot(agente[, 3], agente[, 5]*100/agente[,6], axes=F,xaxt = "n",xlim =corrx , ylim = c(0, 100),
-  #     frame = F, ylab = laby, xlab = labx,main=titulo, cex.lab=0.6)
-  
-  #axis(1, xaxp=c(corrx,5))
-  axis(1, seq(corrx[1],corrx[2],0.5),cex.axis=1.6)
-  axis(2,seq(0,100,20),paste(seq(0,100,20),"%",sep=""),las=2,tck=-0.025, line=-1.1,cex.axis=1.6)
-  
-  library("RColorBrewer")
-  #co<-c(colorRampPalette(brewer.pal(9,"Greys"))(11)[-1],colorRampPalette(brewer.pal(9,"YlOrBr"))(11)[-1],brewer.pal(8,"Reds")[-1],
-  #colorRampPalette(brewer.pal(9,"Greens"))(10)[-1],brewer.pal(4,"Blues")[-1],brewer.pal(4,"Purples")[-1])
-  #pcho<-c(1:25,1:17)
-  co<-c(colorRampPalette(brewer.pal(9,"YlOrBr"))(11)[-c(1:3)],brewer.pal(8,"Reds")[-c(1:2)],
-        colorRampPalette(brewer.pal(9,"Greens"))(10)[-c(1:4)],brewer.pal(4,"Blues")[-1],brewer.pal(4,"Purples")[-1],colorRampPalette(brewer.pal(9,"Greys"))(11)[-c(1:4)])
-  co<-co[round(seq(1,33,length=nag))]
-  pcho<-c(1:25,1:17)
-  
-  cexLEG<-0.8 # editar cexLEG<-1
-  
-  #pcho <- 15:28
-  #pcho <- c(18,15,17,0,1,2,5,6,8) #nuevo cambio de puntos puedo aumentar mas (comprobar)
-  if(grises==TRUE)
-  {co <- c("gray5","gray10","gray15","gray20","gray25","gray30","gray35","gray40","gray45","gray50","gray55","gray60","gray65","gray70")
-  }else{co <- co}
-  for (i in 1:nag) { ## bucle por temperatura
-    agente <- subset(matri, matri[, 1] == not[i])
-    
-    if (test == "probit") {
-      psp <- seq(0.01, 0.99, 0.01)
-      pr <- qnorm(psp)
-      p <- pnorm(pr)
-      w <- (pr - intercepto[i])/slope
-      lines(w, p*100, col = co[i], lwd = 1.8)
-      #p50[i] <- (-intercepto[i])/slope
-      if(agente[1,2]==intervalo & agente[1,5]==agente[1,4] & exis.val[i]==0){p50[i]=100}else{p50[i] <- (-intercepto[i])/slope}
-    }else{
-      ps <- seq(0, 10, 0.001)
-      if (test == "cloglog") {
-        p <- 1 - exp(-exp((intercepto[i] + slope * ps)))
-        #p50[i] <- ( -(-log(-log(0.5))) - intercepto[i])/slope
-        if( agente[1,2]==intervalo & agente[1,5]==agente[1,4] & exis.val[i]==0){p50[i]=100}else{p50[i] <- ( -(-log(-log(0.5))) - intercepto[i])/slope}
-      }
-      if (test == "logit") {
-        p <- 1/(1 + exp(-(intercepto[i] + slope * ps)))
-        #p50[i] <- ((log((1 - 0.5)/0.5)) - intercepto[i])/slope
-        if( agente[1,2]==intervalo & agente[1,5]==agente[1,4] & exis.val[i]==0){p50[i]=100}else{p50[i] <- ((log((1 - 0.5)/0.5)) - intercepto[i])/slope}
-      }
-      lines(ps, p*100, col = co[i], lwd = 1.8)
-    }
-    points(agente[, 3], agente[, 5]*100/agente[,6], pch = pcho[i], cex = 1.5, col = co[i])
-    minx <- min(matri[, 3])
-    li[i] <- p50[i] - qt(0.975, length(matri[, 3]) - length(intercepto) -
-                           length(slope)) * (1/slope)/sqrt(length(intercepto) + length(slope))
-    ls[i] <- p50[i] + qt(0.975, length(matri[, 3]) - length(intercepto) -
-                           length(slope)) * (1/slope)/sqrt(length(intercepto) + length(slope))
-    
-    lines(rbind(c(minx - 0.8, 50), c(p50[i], 50), c(p50[i], -100)), col = "gray50")
-    lines(rbind(c(ls[i], 50), c(li[i], 50)), col = "black", lwd = 2)
-    lines(rbind(c(ls[i], -0.03*100), c(li[i], -0.03*100)), col = "black", lwd = 2)
-    lines(rbind(c(li[i], -0.03*100 - 0.02*100), c(li[i], -0.03*100 + 0.02*100)), col = "black", lwd = 2)
-    lines(rbind(c(ls[i], -0.03*100 - 0.02*100), c(ls[i], -0.03*100 + 0.02*100)), col = "black", lwd = 2)
-    lines(rbind(c(li[i], 0.5*100 - 0.02*100), c(li[i], 0.5*100 + 0.02*100)), col = "black", lwd = 2)
-    lines(rbind(c(ls[i], 0.5*100 - 0.02*100), c(ls[i], 0.5*100 + 0.02*100)), col = "black", lwd = 2)
-  }
-  legend(lgx,lgy, not, pch = pcho, col = co, lty = 1.5, cex=cexLEG)#mean(matri[,5])#max(matri[,3])
-  mat<-data.frame(x = (as.numeric(not)), y = (1/exp(p50)), Lower = (1/exp(ls)), Upper = (1/exp(li)))
-  datao<-data.frame(x = (as.numeric(not)), y = c((1/exp(p50)),(1/exp(ls)),(1/exp(li))))
-  #if( agente[1,2]==intervalo & length(p50[p50==100])>=1 ){p50[p50==100]=-Inf}  ## el valor de cero puede afectar algunas funciones cuando se hace el ajuste
-  p50[p50==100]=-Inf
-  
-  ############## DM: Inicio: Lo siguiente se agrego para usarlo en los graficos de Development Time y omitir las T extremas donde no se desarrolla el insecto, de modo que el grafico represente mejor la realidad
+
+	slope <- parametros[-1:-(length(parametros) - 1)]
+	intercepto <- parametros[-(length(parametros))]
+	nag <- length(levels(factor(matri[, 1])))
+	not <- levels(factor(matri[, 1]))
+	p50 <- li <- ls <- rep(0, nag)
+	#for (i in 1:nag) agente <- subset(matri, matri[, 1] == not[i])
+	agente <- subset(matri, matri[, 1] == not[nag])
+
+	#corrx[2]<-5 # 5
+	lgx<- 0 #4.4
+	lgy<-100
+	laby<-"accumulated frequency"
+	labx<-"log-development time (log-days)"
+	MARGEN=c(4.2, 5, 4, 0.5)
+	#par(cex=tam)
+	par(mar=MARGEN,family="serif",font=1,cex.axis=1.8,cex.lab=1.8)
+	plot(agente[, 3], agente[, 5]*100/agente[,6], axes=F,xaxt = "n",xlim =corrx , ylim = c(0, 100),
+  			frame = F, ylab = laby, xlab = labx,main=titulo)
+	#plot(agente[, 3], agente[, 5]*100/agente[,6], axes=F,xaxt = "n",xlim =corrx , ylim = c(0, 100),
+	#     frame = F, ylab = laby, xlab = labx,main=titulo, cex.lab=0.6)
+	     
+	#axis(1, xaxp=c(corrx,5))
+	axis(1, seq(corrx[1],corrx[2],0.5),cex.axis=1.6)
+	axis(2,seq(0,100,20),paste(seq(0,100,20),"%",sep=""),las=2,tck=-0.025, line=-1.1,cex.axis=1.6)
+	
+	library("RColorBrewer")
+	co<-c(colorRampPalette(brewer.pal(9,"Greys"))(11)[-1],colorRampPalette(brewer.pal(9,"YlOrBr"))(11)[-1],brewer.pal(8,"Reds")[-1],
+        colorRampPalette(brewer.pal(9,"Greens"))(10)[-1],brewer.pal(4,"Blues")[-1],brewer.pal(4,"Purples")[-1])
+	pcho<-c(1:25,1:17)
+	cexLEG<-0.8 # editar cexLEG<-1
+
+	#pcho <- 15:28
+	#pcho <- c(18,15,17,0,1,2,5,6,8) #nuevo cambio de puntos puedo aumentar mas (comprobar)
+        if(grises==TRUE)
+	{co <- c("gray5","gray10","gray15","gray20","gray25","gray30","gray35","gray40","gray45","gray50","gray55","gray60","gray65","gray70")
+	}else{co <- co}
+	for (i in 1:nag) { ## bucle por temperatura
+		agente <- subset(matri, matri[, 1] == not[i])
+
+		if (test == "probit") {
+			psp <- seq(0.01, 0.99, 0.01)
+			pr <- qnorm(psp)
+			p <- pnorm(pr)
+			w <- (pr - intercepto[i])/slope
+			lines(w, p*100, col = co[i], lwd = 1.8)
+			#p50[i] <- (-intercepto[i])/slope
+			if(agente[1,2]==intervalo & agente[1,5]==agente[1,4] & exis.val[i]==0){p50[i]=100}else{p50[i] <- (-intercepto[i])/slope}
+		}else{
+			ps <- seq(0, 10, 0.001)
+			if (test == "cloglog") {
+				p <- 1 - exp(-exp((intercepto[i] + slope * ps)))
+				#p50[i] <- ( -(-log(-log(0.5))) - intercepto[i])/slope
+				if( agente[1,2]==intervalo & agente[1,5]==agente[1,4] & exis.val[i]==0){p50[i]=100}else{p50[i] <- ( -(-log(-log(0.5))) - intercepto[i])/slope}
+			}
+			if (test == "logit") {
+				p <- 1/(1 + exp(-(intercepto[i] + slope * ps)))
+				#p50[i] <- ((log((1 - 0.5)/0.5)) - intercepto[i])/slope
+				if( agente[1,2]==intervalo & agente[1,5]==agente[1,4] & exis.val[i]==0){p50[i]=100}else{p50[i] <- ((log((1 - 0.5)/0.5)) - intercepto[i])/slope}
+			}
+			lines(ps, p*100, col = co[i], lwd = 1.8)
+		}
+		points(agente[, 3], agente[, 5]*100/agente[,6], pch = pcho[i], cex = 1.5, col = co[i])
+		minx <- min(matri[, 3])
+		li[i] <- p50[i] - qt(0.975, length(matri[, 3]) - length(intercepto) -
+						length(slope)) * (1/slope)/sqrt(length(intercepto) + length(slope))
+		ls[i] <- p50[i] + qt(0.975, length(matri[, 3]) - length(intercepto) -
+						length(slope)) * (1/slope)/sqrt(length(intercepto) + length(slope))
+
+		lines(rbind(c(minx - 0.8, 50), c(p50[i], 50), c(p50[i], -100)), col = "gray50")
+		lines(rbind(c(ls[i], 50), c(li[i], 50)), col = "black", lwd = 2)
+		lines(rbind(c(ls[i], -0.03*100), c(li[i], -0.03*100)), col = "black", lwd = 2)
+		lines(rbind(c(li[i], -0.03*100 - 0.02*100), c(li[i], -0.03*100 + 0.02*100)), col = "black", lwd = 2)
+		lines(rbind(c(ls[i], -0.03*100 - 0.02*100), c(ls[i], -0.03*100 + 0.02*100)), col = "black", lwd = 2)
+		lines(rbind(c(li[i], 0.5*100 - 0.02*100), c(li[i], 0.5*100 + 0.02*100)), col = "black", lwd = 2)
+		lines(rbind(c(ls[i], 0.5*100 - 0.02*100), c(ls[i], 0.5*100 + 0.02*100)), col = "black", lwd = 2)
+	}
+	legend(lgx,lgy, not, pch = pcho, col = co, lty = 1.5, cex=cexLEG)#mean(matri[,5])#max(matri[,3])
+	mat<-data.frame(x = (as.numeric(not)), y = (1/exp(p50)), Lower = (1/exp(ls)), Upper = (1/exp(li)))
+	datao<-data.frame(x = (as.numeric(not)), y = c((1/exp(p50)),(1/exp(ls)),(1/exp(li))))
+	#if( agente[1,2]==intervalo & length(p50[p50==100])>=1 ){p50[p50==100]=-Inf}  ## el valor de cero puede afectar algunas funciones cuando se hace el ajuste
+	p50[p50==100]=-Inf
+	
+	 ############## DM: Inicio: Lo siguiente se agrego para usarlo en los graficos de Development Time y omitir las T extremas donde no se desarrolla el insecto, de modo que el grafico represente mejor la realidad
   vv=exis.val==1; mat<-mat[vv,]; #p50<-p50[vv]
   vvv=c(vv,vv,vv); datao<-datao[vvv,];
   ############## DM: Fin
-  
-  salidas <- list(mat=mat,shapMi=datao,median=p50)
-  return(salidas)
+                
+	salidas <- list(mat=mat,shapMi=datao,median=p50)
+	return(salidas)
 }
 
 ##############################################
@@ -558,4 +553,144 @@ for (i in 2:length(tp))
   Male<-rbind(Male,data.frame(cbind(tp[i],1,sum(subset(datapre[[length(estadios)-2]][,4],datapre[[length(estadios)-2]][,1]==tp[i])),sum(subset(datapre[[length(estadios)-2]][,4],datapre[[length(estadios)-2]][,1]==tp[i])))))
   }
 return(Male)
+}
+
+####################################
+# AFT Functions
+
+descum<-function(vec){dc<-c(1);dc[1]=vec[1];for(i in 2:length(vec)){dc[i]=vec[i]-vec[i-1]};return(dc)}
+
+CohortTable<-function(dat,IDc=2)
+{
+  tmv<-data.frame(TiemVid=apply(dat[,3:4],1,mean),Group=dat[,IDc])
+  Nmuestras<-aggregate(dat[,5],list(Group=dat[,IDc]),unique);colnames(Nmuestras)[2]<-"Sample"
+  temps=unique(tmv[,2])
+  
+  tmv2=data.frame(Group=NA,TiemVid=NA,Freq=NA,FreqCum=NA,Cum_Freq_Rela=NA)
+  for(j in 1:length(unique(tmv[,2])))
+  {
+    temporal0=cumsum(table(tmv[tmv[,2]==temps[j],1]))
+    temporal=temporal0/temporal0[length(temporal0)]
+    if(length(temporal0)==1){FreqCum0<-temporal0}else{FreqCum0<-descum(temporal0)}
+    temporal2=data.frame(Group=temps[j],TiemVid=names(temporal),Freq=FreqCum0,FreqCum=temporal0,Cum_Freq_Rela=temporal)
+    tmv2=rbind(tmv2,temporal2)
+  }
+  tmv2=tmv2[-1,]
+  
+  tmv2$TiemVid=as.numeric(tmv2$TiemVid)
+  tmv2$Group=as.factor(tmv2$Group)
+  CohortT <- (merge(Nmuestras, tmv2, by = 'Group'));CohortT<-CohortT[,c(1,3,2,4)]
+  
+  return(list(CohortT=CohortT,tmv2=tmv2))
+}
+
+CohortTable2<-function(dat,IDc=2)
+{
+  tmv<-data.frame(TiemVid=apply(dat[,3:4],1,mean),Group=dat[,IDc])
+  Nmuestras<-aggregate(dat[,5],list(Group=dat[,IDc]),unique);colnames(Nmuestras)[2]<-"Sample"
+  temps=unique(tmv[,2])
+  
+  tmv2=data.frame(Group=NA,TiemVid=NA,Freq=NA,FreqCum=NA,Cum_Freq_Rela=NA)
+  for(j in 1:length(unique(tmv[,2])))
+  {
+    temporal0=cumsum(table(tmv[tmv[,2]==temps[j],1]))
+    temporal=temporal0/temporal0[length(temporal0)]
+    if(length(temporal0)==1){FreqCum0<-temporal0}else{FreqCum0<-descum(temporal0)}
+    temporal2=data.frame(Group=temps[j],TiemVid=names(temporal),Freq=FreqCum0,FreqCum=temporal0,Cum_Freq_Rela=temporal)
+    #temporal2=data.frame(Tempr=temps[j],TiemVid=names(temporal),Freq=descum(temporal0),FreqCum=temporal0,Cum_Freq_Rela=temporal)
+    tmv2=rbind(tmv2,temporal2)
+  }
+  tmv2=tmv2[-1,]
+  
+  tmv2$TiemVid=as.numeric(tmv2$TiemVid)
+  tmv2$Group=as.factor(tmv2$Group)
+  CohortT <- (merge(Nmuestras, tmv2, by = 'Group'));CohortT<-CohortT[,c(1,3,2,4)]
+  
+  return(CohortT)
+}
+
+ParamT<-function(out.weib,nx,ny,modelo,tp,tp0,tmv2)
+{
+  # tp<-as.factor(tp)
+  # id<-order(as.numeric(as.character(tp)))
+  # tp<-tp[id]
+  #pcho <- c(18,15,17,0,1,2,5,6,8,9,10,7,4,3,11,12,13,14,16,19,20,21,22,23,24,25,26)
+  pct <- 1:999/1000
+  
+  library("RColorBrewer")
+  co<-c(colorRampPalette(brewer.pal(9,"YlOrBr"))(11)[-c(1:3)],brewer.pal(8,"Reds")[-c(1:2)],
+        colorRampPalette(brewer.pal(9,"Greens"))(10)[-c(1:4)],brewer.pal(4,"Blues")[-1],brewer.pal(4,"Purples")[-1],colorRampPalette(brewer.pal(9,"Greys"))(11)[-c(1:4)])
+  co<-co[round(seq(1,33,length=length(tp)))]
+  pcho<-c(1:25,1:17)
+  
+  ptime <- predict(out.weib, newdata=data.frame(Group=tp[1]), type="quantile", p=pct, se=TRUE)
+  #matplot(cbind(log(ptime$fit), log(ptime$fit + 2*ptime$se.fit),log(ptime$fit - 2*ptime$se.fit)), pct,xlab="natural logarithm of days", ylab="accumulated development frequency", type='l', lty=c(1,2,2), col=co[1],xlim=c(nx[1],nx[2]))
+  matplot(log(ptime$fit), pct,xlab="natural logarithm of days", ylab="accumulated development frequency", type='l', lty=c(1,2,2), col=co[1],xlim=c(nx[1],nx[2]))
+  for(i in 2:length(tp))
+  {
+    ptime2 <- predict(out.weib, newdata=data.frame(Group=tp[i]), type="quantile", p=pct, se=TRUE)
+    #matplot(cbind(log(ptime2$fit), log(ptime2$fit + 2*ptime2$se.fit),log(ptime2$fit - 2*ptime2$se.fit)), pct, type='l', col=co[i], add=TRUE,lty=c(1,2,2),xlim=c(nx[1],nx[2]))
+    matplot(log(ptime2$fit), pct, type='l', col=co[i], add=TRUE,lty=1,xlim=c(nx[1],nx[2]))
+  }
+  
+  TemprU=as.factor(unique(tp))
+  #TemprU<-paste("Group_",TemprU,sep="")
+  legend('topright',as.character(tp0), col=co[1:length(TemprU)], pch=pcho[1:length(TemprU)], lty=1, cex=.9, bty='n')  
+  
+  #CohortTableF <-CohortTable(dat)$CohortT
+  
+  for(i in 1:length(TemprU))
+  {
+    temporal=subset(tmv2,Group==TemprU[i])
+    points(log(temporal[,2]),temporal[,5],col=co[i],pch=pcho[i])
+  }
+}
+
+
+IncludBatch<-function(dat,IDc=2)
+{
+    GR1<-aggregate(dat[,2],list(Batch=dat[,1],Group=dat[,IDc]),mean)
+    colnames(GR1)[3]<-"Temp"
+    #GR2<-aggregate(dat[,2],list(Group=dat[,IDc]),mean)
+    
+    #GR3<-merge(GR1,GR2,by = "Group")
+    GR1$TempBatch<-paste(GR1$Group,GR1$Batch,sep="-")
+    #GR3$Temp2<-GR3$Temp+0.01*(GR3$Batch-GR3$x.y+1)# SE PUEDE EDITAR
+    GR1<-GR1[,3:4]
+    
+    # datTemp0<-paste(dat[,IDc],dat$Batch,sep="-")
+    # dat$TempBatch<-datTemp0
+    
+    # datTempF<-merge(dat,GR1,by = "TempBatch")
+    # 
+    # 
+    # datTempF$Temp<-datTempF$Temp2
+    # datTempF<-datTempF[,-1*ncol(datTempF)]
+
+    return(GR1)
+}
+
+
+AIC.AllModels<-function(Group,dat)
+{
+  Nparameters<-c(2,2,2)
+  models<-c("weibull","lognormal","loglogistic")
+  AIC.models<-rep(NA,3)
+  DEV.models<-rep(NA,3)
+  LogLik.models<-rep(NA,3)
+  
+  for(i in 1:length(models))
+  {
+    out.temp <-survreg(Surv(start, stop, type = "interval2") ~ Group, dist = models[i],data=dat)
+    AICtemp<- -2*out.temp$loglik[2] + 2*(Nparameters[i]+1) # 2(a+b) donde a es numero de parametros y b el numero de covariables
+    AIC.models[i]<-AICtemp
+    DEVtemp<-sum(resid(out.temp,type="deviance")^2)
+    if(is.nan(DEVtemp)){DEVtemp<-NA}
+    DEV.models[i]<-DEVtemp
+    LogLiktemp<- out.temp$loglik[2]
+    LogLik.models[i]<-LogLiktemp
+  }
+  TabAICs<-data.frame(AIC=AIC.models,Deviance=DEV.models,LogLik=LogLik.models)
+  rownames(TabAICs)<-models
+  return(TabAICs)
 }
